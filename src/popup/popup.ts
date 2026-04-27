@@ -314,59 +314,9 @@ async function bootstrap(): Promise<void> {
   byId<HTMLButtonElement>("tabAuctions").addEventListener("click", () => setActiveTab("auctions"));
 
   // Footer buttons
-  byId<HTMLAnchorElement>("changelogBtn").addEventListener("click", async (e) => {
+  byId<HTMLAnchorElement>("changelogBtn").addEventListener("click", (e) => {
     e.preventDefault();
-
-    // Simple markdown parser
-    function parseChangelogMarkdown(md: string): string {
-      return md
-        .replace(/^#### (.*$)/gm, '<h4>$1</h4>')
-        .replace(/^### (.*$)/gm, '<h3>$1</h3>')
-        .replace(/^## (.*$)/gm, '<h2>$1</h2>')
-        .replace(/^# (.*$)/gm, '<h1>$1</h1>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/`([^`]+)`/g, '<code>$1</code>')
-        .replace(/^- (.*$)/gm, '<li>$1</li>')
-        .replace(/(<li>.*<\/li>\n?)+/gs, '<ul>$&</ul>')
-        .trim();
-    }
-
-    try {
-      const mdUrl = chrome.runtime.getURL("CHANGE_LOG.md");
-      const response = await fetch(mdUrl);
-      const md = await response.text();
-      const htmlBody = parseChangelogMarkdown(md);
-
-      const fullHtml = `<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Changelog - Mannco Enhancer</title>
-<style>
-:root { --bg: #0d1b2e; --card: #142236; --text: #c8dff0; --muted: #5a7a96; --accent: #5ab4ff; --border: #1e3a5a; }
-body { margin: 0; padding: 24px; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; line-height: 1.6; color: var(--text); background: var(--bg); max-width: 720px; margin-left: auto; margin-right: auto; }
-h1 { margin: 0 0 20px; font-size: 24px; color: var(--accent); border-bottom: 2px solid var(--border); padding-bottom: 10px; }
-h2 { margin: 28px 0 12px; font-size: 18px; color: var(--accent); }
-h3 { margin: 18px 0 8px; font-size: 14px; color: #8aabcc; text-transform: uppercase; letter-spacing: 0.5px; }
-ul { margin: 0 0 12px; padding-left: 20px; }
-li { margin: 6px 0; }
-strong { color: var(--accent); }
-code { background: var(--card); padding: 2px 6px; border-radius: 4px; font-family: "Courier New", monospace; font-size: 12px; color: #f5a050; }
-</style>
-</head>
-<body>
-${htmlBody}
-</body>
-</html>`;
-
-      const blob = new Blob([fullHtml], { type: "text/html" });
-      const url = URL.createObjectURL(blob);
-      chrome.tabs.create({ url });
-    } catch {
-      // Fallback: try opening the static HTML file
-      chrome.tabs.create({ url: chrome.runtime.getURL("CHANGE_LOG.html") });
-    }
+    chrome.tabs.create({ url: chrome.runtime.getURL("CHANGE_LOG.html") });
   });
 
   const chartMode = byId<HTMLSelectElement>("itemChartMode");
