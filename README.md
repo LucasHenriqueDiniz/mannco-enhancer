@@ -56,6 +56,12 @@ Mannco Enhancer follows a strict **Non-Destructive** philosophy:
 - **Explicit Consent**: Every marketplace action requires a clear, intentional user click.
 - **Safe Defaults**: High-impact features are disabled by default.
 
+## 🔮 Planned Features
+
+- **Keyboard Shortcuts**: Customizable hotkeys for quick buy, list, and price-update actions without reaching for the mouse.
+- **Trade Offer Enhancer**: Overlay trade-offer pages with total value summaries and estimated profit/loss at a glance.
+- **Bundle Page Enhancer**: Extra sorting, filtering, and value insights on bundle listings for faster deal evaluation.
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please follow these guidelines:
