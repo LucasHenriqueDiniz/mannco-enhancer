@@ -242,8 +242,16 @@
   "toggle.itemWarnNegativeFlipOnSubmit.desc": "Advertir cuando el flip sea negativo.",
   "toggle.off": "Desactivado",
   "toggle.on": "Activado",
+  "toggle.profileExportBuyOrders": "Exportar Órdenes de Compra",
+  "toggle.profileExportBuyOrders.desc": "Agrega botón para exportar la tabla de órdenes de compra.",
+  "toggle.profileExportCashouts": "Exportar Retiros",
+  "toggle.profileExportCashouts.desc": "Agrega botón para exportar la tabla de retiros.",
+  "toggle.profileExportTransactions": "Exportar Transacciones",
+  "toggle.profileExportTransactions.desc": "Agrega botón para exportar el historial de transacciones.",
   "toggle.profileFixXError": "Corregir error X",
   "toggle.profileFixXError.desc": "Corregir spam ARIA en perfil.",
   "toggle.profileHelpers": "Ayudas de perfil",
-  "toggle.profileHelpers.desc": "Mejorar página de perfil."
+  "toggle.profileHelpers.desc": "Mejorar página de perfil.",
+  "toggle.profileRemoveAllBuyOrders": "Eliminar Todas las Órdenes",
+  "toggle.profileRemoveAllBuyOrders.desc": "Agrega botón para eliminar todas las órdenes de compra a la vez."
 }

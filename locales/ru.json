@@ -242,8 +242,16 @@
   "toggle.itemWarnNegativeFlipOnSubmit.desc": "Предупреждать при отрицательном флипе.",
   "toggle.off": "Выключено",
   "toggle.on": "Включено",
+  "toggle.profileExportBuyOrders": "Экспорт ордеров на покупку",
+  "toggle.profileExportBuyOrders.desc": "Добавляет кнопку экспорта таблицы ордеров на покупку.",
+  "toggle.profileExportCashouts": "Экспорт выводов",
+  "toggle.profileExportCashouts.desc": "Добавляет кнопку экспорта таблицы выводов средств.",
+  "toggle.profileExportTransactions": "Экспорт транзакций",
+  "toggle.profileExportTransactions.desc": "Добавляет кнопку экспорта истории транзакций.",
   "toggle.profileFixXError": "Исправить ошибку X",
   "toggle.profileFixXError.desc": "Исправить спам ARIA в профиле.",
   "toggle.profileHelpers": "Помощники профиля",
-  "toggle.profileHelpers.desc": "Улучшить страницу профиля."
+  "toggle.profileHelpers.desc": "Улучшить страницу профиля.",
+  "toggle.profileRemoveAllBuyOrders": "Удалить все ордера",
+  "toggle.profileRemoveAllBuyOrders.desc": "Добавляет кнопку для удаления всех ордеров на покупку сразу."
 }

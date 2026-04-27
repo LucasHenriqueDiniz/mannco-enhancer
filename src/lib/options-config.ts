@@ -86,16 +86,34 @@ export const TOGGLE_OPTIONS: ToggleOption[] = [
     description: "Shows the 'Painted' tag for painted items in the inventory."
   },
   {
-    key: "profileHelpers",
-    page: "profile",
-    label: "Profile Helpers",
-    description: "Adds profile quality-of-life helpers and shortcuts."
-  },
-  {
     key: "profileFixXError",
     page: "profile",
     label: "Fix Profile Accessibility",
     description: "Prevents repeated invisible ARIA regions that can cause profile lag."
+  },
+  {
+    key: "profileExportTransactions",
+    page: "profile",
+    label: "Export Transactions",
+    description: "Adds an export button to the transaction history table."
+  },
+  {
+    key: "profileExportCashouts",
+    page: "profile",
+    label: "Export Cashouts",
+    description: "Adds an export button to the cashouts table."
+  },
+  {
+    key: "profileExportBuyOrders",
+    page: "profile",
+    label: "Export Buy Orders",
+    description: "Adds an export button to the buy orders table."
+  },
+  {
+    key: "profileRemoveAllBuyOrders",
+    page: "profile",
+    label: "Remove All Buy Orders",
+    description: "Adds a button to remove all buy orders at once."
   },
   {
     key: "itemHideDetailsTitle",

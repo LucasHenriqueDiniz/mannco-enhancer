@@ -242,8 +242,16 @@
   "toggle.itemWarnNegativeFlipOnSubmit.desc": "Warn when flip is negative.",
   "toggle.off": "Off",
   "toggle.on": "On",
+  "toggle.profileExportBuyOrders": "Export Buy Orders",
+  "toggle.profileExportBuyOrders.desc": "Adds an export button to the buy orders table.",
+  "toggle.profileExportCashouts": "Export Cashouts",
+  "toggle.profileExportCashouts.desc": "Adds an export button to the cashouts table.",
+  "toggle.profileExportTransactions": "Export Transactions",
+  "toggle.profileExportTransactions.desc": "Adds an export button to the transaction history table.",
   "toggle.profileFixXError": "Fix X error",
   "toggle.profileFixXError.desc": "Fix ARIA spam in profile.",
   "toggle.profileHelpers": "Profile helpers",
-  "toggle.profileHelpers.desc": "Enhance profile page."
+  "toggle.profileHelpers.desc": "Enhance profile page.",
+  "toggle.profileRemoveAllBuyOrders": "Remove All Buy Orders",
+  "toggle.profileRemoveAllBuyOrders.desc": "Adds a button to remove all buy orders at once."
 }

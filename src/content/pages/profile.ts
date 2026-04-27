@@ -1,4 +1,5 @@
 import type { ContentModule } from "../types";
+import type { Settings } from "../../lib/types";
 import { canRunWithCooldown } from "../shared/safety";
 
 const TOOLBAR_STATUS_ID = "mannco-enhancer-profile-tools-status";
@@ -2196,23 +2197,27 @@ function wireActionButton(button: HTMLButtonElement): void {
   button.dataset.manncoEnhancerProfileWired = "true";
 }
 
-function ensureProfileActionButtons(): void {
+function ensureProfileActionButtons(settings: Settings): void {
   ensureProfileActionStyles();
 
   const txWrap = ensureActionWrapByPaginationId("TransacPagination");
-  if (txWrap) {
+  if (txWrap && settings.profileExportTransactions) {
     wireActionButton(ensureActionButton(txWrap, "export-transactions", "Export", "btn btn-secondary btn-sm"));
   }
 
   const cashoutWrap = ensureActionWrapByPaginationId("cashoutPagination");
-  if (cashoutWrap) {
+  if (cashoutWrap && settings.profileExportCashouts) {
     wireActionButton(ensureActionButton(cashoutWrap, "export-cashouts", "Export", "btn btn-secondary btn-sm"));
   }
 
   const boWrap = ensureActionWrapByPaginationId("bosPagination");
   if (boWrap) {
-    wireActionButton(ensureActionButton(boWrap, "export-buy-orders", "Export", "btn btn-secondary btn-sm"));
-    wireActionButton(ensureActionButton(boWrap, "remove-buy-orders", "Remove all", "btn btn-danger btn-sm"));
+    if (settings.profileExportBuyOrders) {
+      wireActionButton(ensureActionButton(boWrap, "export-buy-orders", "Export", "btn btn-secondary btn-sm"));
+    }
+    if (settings.profileRemoveAllBuyOrders) {
+      wireActionButton(ensureActionButton(boWrap, "remove-buy-orders", "Remove all", "btn btn-danger btn-sm"));
+    }
   }
 }
 
@@ -2222,11 +2227,11 @@ export const profileModule: ContentModule = {
   apply(_context, settings) {
     applyProfileMoneyMask(false);
     applyProfileAriaLiveSpamFix(settings.enabled && settings.profileFixXError);
-    if (!settings.enabled || !settings.profileHelpers) {
+    if (!settings.enabled) {
       cleanupProfileActionButtons();
       return;
     }
 
-    ensureProfileActionButtons();
+    ensureProfileActionButtons(settings);
   }
 };

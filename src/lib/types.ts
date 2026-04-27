@@ -30,6 +30,10 @@ export type Settings = {
   inventoryShowPaintedTag: boolean;
   profileHelpers: boolean;
   profileFixXError: boolean;
+  profileExportTransactions: boolean;
+  profileExportCashouts: boolean;
+  profileExportBuyOrders: boolean;
+  profileRemoveAllBuyOrders: boolean;
   itemHideDetailsTitle: boolean;
   itemHideBuyOrderHint: boolean;
   itemHideTf2ShopButton: boolean;
