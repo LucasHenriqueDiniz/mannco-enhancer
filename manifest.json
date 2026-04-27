@@ -55,8 +55,10 @@
       "resources": [
         "assets/SteamLogo.png",
         "assets/providers/*",
+        "assets/icons/*",
         "locales/*",
-        "CHANGE_LOG.md"
+        "CHANGE_LOG.md",
+        "CHANGE_LOG.html"
       ],
       "matches": [
         "https://mannco.store/*",
