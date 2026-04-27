@@ -79,13 +79,11 @@ function translateGroupName(groupName: string, lang: string): string {
   return tr(mapped, lang, groupName);
 }
 
+// General now includes single-option pages (giveaways/profile/auctions)
 const PANEL_PAGES = {
-  general: ["global", "home", "bundles"],
-  giveaways: ["giveaways"],
+  general: ["global", "home", "bundles", "giveaways", "profile", "auctions"],
   item: ["item"],
-  inventory: ["inventory"],
-  profile: ["profile"],
-  auctions: ["auctions"]
+  inventory: ["inventory"]
 } as const;
 
 function byId<T extends HTMLElement>(id: string): T {
@@ -106,14 +104,11 @@ function getLanguageValue(settings: Settings): "auto" | "en" | "pt_BR" | "es" | 
   return settings.language;
 }
 
-function setActiveTab(tab: "general" | "giveaways" | "item" | "inventory" | "profile" | "auctions"): void {
+function setActiveTab(tab: "general" | "item" | "inventory"): void {
   const tabs = [
     { button: byId<HTMLButtonElement>("tabGeneral"), panel: byId<HTMLElement>("generalPanel"), key: "general" as const },
-    { button: byId<HTMLButtonElement>("tabGiveaways"), panel: byId<HTMLElement>("giveawaysPanel"), key: "giveaways" as const },
     { button: byId<HTMLButtonElement>("tabItem"), panel: byId<HTMLElement>("itemPanel"), key: "item" as const },
-    { button: byId<HTMLButtonElement>("tabInventory"), panel: byId<HTMLElement>("inventoryPanel"), key: "inventory" as const },
-    { button: byId<HTMLButtonElement>("tabProfile"), panel: byId<HTMLElement>("profilePanel"), key: "profile" as const },
-    { button: byId<HTMLButtonElement>("tabAuctions"), panel: byId<HTMLElement>("auctionsPanel"), key: "auctions" as const }
+    { button: byId<HTMLButtonElement>("tabInventory"), panel: byId<HTMLElement>("inventoryPanel"), key: "inventory" as const }
   ];
 
   for (const tabInfo of tabs) {
@@ -149,13 +144,23 @@ function renderPanelRows(containerId: string, pages: readonly string[], lang: st
             (option) => {
               const label = trToggle(option.key, "", lang, option.label);
               const desc = trToggle(option.key, ".desc", lang, option.description);
-              return `<label class="row"><span class="label-wrap"><span class="label">${label}</span><span class="desc">${desc}</span></span><input id="${option.key}" type="checkbox" /></label>`;
+              return `
+                <label class="me-row" for="cb-${option.key}">
+                  <div class="me-row-text">
+                    <p class="me-row-title">${label}</p>
+                    <p class="me-row-sub">${desc}</p>
+                  </div>
+                  <input id="cb-${option.key}" type="checkbox" data-key="${option.key}" />
+                  <div class="me-check-off" data-check="${option.key}">
+                    <svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </div>
+                </label>`;
             }
           )
           .join("");
 
         if (!hasCustomGroups || groupName === tr("group.General", lang, "General")) return optionRows;
-        return `<div class="section-title">${groupName}</div>${optionRows}`;
+        return `<div style="padding: 5px 10px; font-size: 9px; color: #4a8aaa; letter-spacing: 0.5px; text-transform: uppercase; font-weight: 600; border-bottom: 1px solid #0d1b2e;">${groupName}</div>${optionRows}`;
       })
       .join("");
   };
@@ -164,24 +169,29 @@ function renderPanelRows(containerId: string, pages: readonly string[], lang: st
     .map((page) => {
       const options = TOGGLE_OPTIONS.filter((option) => option.page === page);
       if (options.length === 0) return "";
-
-      const sectionRows = renderSectionRows(options);
-      const defaults: Record<string, string> = {
-        global: "Global",
-        home: "Home",
-        bundles: "Bundles",
-        giveaways: "Giveaways",
-        item: "Items",
-        inventory: "Inventory",
-        profile: "Profile",
-        auctions: "Auctions"
-      };
-      const label = tr(`panel.${page}`, lang, defaults[page] ?? page);
-      return `<div class="section-title">${label}</div>${sectionRows}`;
+      return renderSectionRows(options);
     })
     .join("");
 
-  rows.innerHTML = html || `<div class="empty">${tr("noOptions", lang, "No options in this section yet.")}</div>`;
+  rows.innerHTML = html || `<div style="padding: 12px; text-align: center; color: #5a7a96; font-size: 10px;">${tr("noOptions", lang, "No options in this section yet.")}</div>`;
+
+  // Bind checkbox visuals
+  rows.querySelectorAll<HTMLInputElement>('input[type="checkbox"]').forEach((input) => {
+    const key = input.dataset.key!;
+    const visual = rows.querySelector<HTMLDivElement>(`[data-check="${key}"]`);
+    if (!visual) return;
+
+    input.addEventListener("change", () => {
+      visual.classList.toggle("me-check", input.checked);
+      visual.classList.toggle("me-check-off", !input.checked);
+    });
+
+    // Click on visual toggles input
+    visual.addEventListener("click", (e) => {
+      e.preventDefault();
+      input.click();
+    });
+  });
 }
 
 function parseQuantityRules(ruleString: string): Array<{ price: number; qty: number }> {
@@ -224,7 +234,7 @@ function renderQuantityRulesTable(
         <tr>
           <th>${tr("table.maxPrice", lang, "Max Price")}</th>
           <th>${tr("table.quantity", lang, "Quantity")}</th>
-          <th>${tr("table.actions", lang, "Actions")}</th>
+          <th style="text-align: right;">${tr("table.actions", lang, "Actions")}</th>
         </tr>
       </thead>
       <tbody>
@@ -233,9 +243,9 @@ function renderQuantityRulesTable(
             (rule, idx) => `
           <tr>
             <td>$${rule.price.toFixed(2)}</td>
-            <td>${rule.qty}×</td>
+            <td>${rule.qty}&times;</td>
             <td class="quantity-rule-actions">
-              <button class="danger" data-delete="${idx}">🗑️</button>
+              <button class="danger" data-delete="${idx}">${tr("delete", lang, "Del")}</button>
             </td>
           </tr>
         `
@@ -247,7 +257,6 @@ function renderQuantityRulesTable(
 
   container.innerHTML = tableHtml;
 
-  // Add delete handlers
   container.querySelectorAll<HTMLButtonElement>("button[data-delete]").forEach((btn) => {
     btn.addEventListener("click", async () => {
       const idx = parseInt(btn.dataset.delete || "0", 10);
@@ -261,15 +270,21 @@ async function bootstrap(): Promise<void> {
 
   const renderAndBindToggles = (): void => {
     renderPanelRows("generalToggleRows", PANEL_PAGES.general, settings.language);
-    renderPanelRows("giveawaysToggleRows", PANEL_PAGES.giveaways, settings.language);
     renderPanelRows("itemToggleRows", PANEL_PAGES.item, settings.language);
     renderPanelRows("inventoryToggleRows", PANEL_PAGES.inventory, settings.language);
-    renderPanelRows("profileToggleRows", PANEL_PAGES.profile, settings.language);
-    renderPanelRows("auctionsToggleRows", PANEL_PAGES.auctions, settings.language);
 
     for (const option of TOGGLE_OPTIONS) {
-      const field = byId<HTMLInputElement>(option.key);
+      const field = document.querySelector<HTMLInputElement>(`input[data-key="${option.key}"]`);
+      if (!field) continue;
       field.checked = Boolean(settings[option.key]);
+      
+      // Set initial visual state
+      const visual = document.querySelector<HTMLDivElement>(`[data-check="${option.key}"]`);
+      if (visual) {
+        visual.classList.toggle("me-check", field.checked);
+        visual.classList.toggle("me-check-off", !field.checked);
+      }
+
       field.addEventListener("change", async () => {
         settings = { ...settings, [option.key]: field.checked };
         await saveSettings(settings);
@@ -278,24 +293,20 @@ async function bootstrap(): Promise<void> {
     }
   };
 
-  // Localize UI based on current language
   await loadLocale(settings.language);
   renderAndBindToggles();
   localizeUI(settings.language);
   updateLanguageFlag(settings.language);
 
-  const tabGeneral = byId<HTMLButtonElement>("tabGeneral");
-  const tabGiveaways = byId<HTMLButtonElement>("tabGiveaways");
-  const tabItem = byId<HTMLButtonElement>("tabItem");
-  const tabInventory = byId<HTMLButtonElement>("tabInventory");
-  const tabProfile = byId<HTMLButtonElement>("tabProfile");
-  const tabAuctions = byId<HTMLButtonElement>("tabAuctions");
-  tabGeneral.addEventListener("click", () => setActiveTab("general"));
-  tabGiveaways.addEventListener("click", () => setActiveTab("giveaways"));
-  tabItem.addEventListener("click", () => setActiveTab("item"));
-  tabInventory.addEventListener("click", () => setActiveTab("inventory"));
-  tabProfile.addEventListener("click", () => setActiveTab("profile"));
-  tabAuctions.addEventListener("click", () => setActiveTab("auctions"));
+  byId<HTMLButtonElement>("tabGeneral").addEventListener("click", () => setActiveTab("general"));
+  byId<HTMLButtonElement>("tabItem").addEventListener("click", () => setActiveTab("item"));
+  byId<HTMLButtonElement>("tabInventory").addEventListener("click", () => setActiveTab("inventory"));
+
+  // Footer buttons
+  byId<HTMLAnchorElement>("changelogBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+    chrome.tabs.create({ url: chrome.runtime.getURL("CHANGE_LOG.html") });
+  });
 
   const chartMode = byId<HTMLSelectElement>("itemChartMode");
   chartMode.value = settings.itemChartMode;
@@ -400,7 +411,6 @@ async function bootstrap(): Promise<void> {
     settings = { ...settings, language: nextLanguage };
     await saveSettings(settings);
     await notifyActiveTab(settings);
-    // Reflect translation updates and flags
     await loadLocale(nextLanguage);
     renderAndBindToggles();
     localizeUI(nextLanguage);
@@ -416,7 +426,6 @@ async function bootstrap(): Promise<void> {
     await saveSettings(settings);
     await notifyActiveTab(settings);
   });
-
 }
 
 void bootstrap();
