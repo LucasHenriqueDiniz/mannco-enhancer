@@ -1,0 +1,18 @@
+{
+  "name": "mannco-store-enhancer",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Manifest V3 browser extension starter for mannco.store enhancements.",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc --noEmit",
+    "i18n:build": "node scripts/build-locales.mjs",
+    "i18n:sync": "node scripts/sync-locales.mjs",
+    "i18n:check": "node scripts/check-locales.mjs"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.293",
+    "esbuild": "^0.25.3",
+    "typescript": "^5.8.3"
+  }
+}

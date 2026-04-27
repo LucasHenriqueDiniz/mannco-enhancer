@@ -1,0 +1,63 @@
+{
+  "manifest_version": 3,
+  "name": "Mannco Enhancer",
+  "description": "Quality-of-life improvements for mannco.store with user-controlled toggles.",
+  "version": "0.1.0",
+  "permissions": ["storage", "tabs"],
+  "host_permissions": [
+    "https://mannco.store/*",
+    "https://www.mannco.store/*",
+    "https://steamcommunity.com/*",
+    "https://backpack.tf/*",
+    "https://api.dmarket.com/*",
+    "https://dmarket.com/*",
+    "https://skinport.com/*",
+    "https://api.skinport.com/*",
+    "https://csfloat.com/*",
+    "https://tradeit.gg/*",
+    "https://bitskins.com/*",
+    "https://shadowpay.com/*",
+    "https://waxpeer.com/*",
+    "https://skinbaron.de/*"
+  ],
+  "background": {
+    "service_worker": "dist/background/service-worker.js"
+  },
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "32": "assets/icons/icon32.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Mannco Enhancer",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "assets/icons/icon16.png",
+      "32": "assets/icons/icon32.png",
+      "48": "assets/icons/icon48.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://mannco.store/*",
+        "https://www.mannco.store/*"
+      ],
+      "js": ["dist/content/main.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "assets/SteamLogo.png",
+        "assets/providers/*"
+      ],
+      "matches": [
+        "https://mannco.store/*",
+        "https://www.mannco.store/*"
+      ]
+    }
+  ]
+}
