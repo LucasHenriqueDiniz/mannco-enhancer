@@ -176,19 +176,26 @@
         const container = document.getElementById('content');
         try {
           const mdUrl = new URL('CHANGE_LOG.md', window.location.href).href;
-          const response = await fetch(mdUrl);
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 5000);
+          const response = await fetch(mdUrl, { signal: controller.signal });
+          clearTimeout(timeoutId);
 
           if (!response.ok) {
             throw new Error(`HTTP ${response.status} - ${response.statusText}`);
           }
 
           const md = await response.text();
+          if (!md.trim()) {
+            throw new Error('Changelog file is empty');
+          }
           container.innerHTML = parseMarkdown(md);
         } catch (err) {
           console.error('[Changelog] Failed to load:', err);
+          const message = err instanceof Error ? err.message : String(err);
           container.innerHTML = `<div id="error">
             <strong>Failed to load changelog</strong><br/>
-            ${err.message}<br/><br/>
+            ${message}<br/><br/>
             <span style="color: var(--muted); font-size: 12px;">
               Make sure CHANGE_LOG.md exists in the extension root directory.
             </span>

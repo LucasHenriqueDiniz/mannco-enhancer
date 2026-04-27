@@ -35,6 +35,10 @@ async function run() {
     }
   }
 
+  // Copy changelog files to dist
+  await cp(resolve(root, "CHANGE_LOG.md"), resolve(dist, "CHANGE_LOG.md"));
+  await cp(resolve(root, "CHANGE_LOG.html"), resolve(dist, "CHANGE_LOG.html"));
+
   console.log("Build complete. Load this folder in chrome://extensions");
 }
 
