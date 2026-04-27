@@ -8,8 +8,7 @@
     "typecheck": "tsc --noEmit",
     "i18n:build": "node scripts/build-locales.mjs",
     "i18n:sync": "node scripts/sync-locales.mjs",
-    "i18n:check": "node scripts/check-locales.mjs",
-    "changelog:build": "node scripts/build-changelog.mjs"
+    "i18n:check": "node scripts/check-locales.mjs"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.293",

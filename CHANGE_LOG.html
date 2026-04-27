@@ -3,86 +3,102 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Changelog</title>
+    <title>Changelog - Mannco Enhancer</title>
     <style>
+      :root {
+        --bg: #0d1b2e;
+        --card: #142236;
+        --text: #c8dff0;
+        --muted: #5a7a96;
+        --accent: #5ab4ff;
+        --border: #1e3a5a;
+      }
       body {
         margin: 0;
-        padding: 16px;
-        font-family: "Segoe UI", Tahoma, sans-serif;
+        padding: 24px;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         font-size: 14px;
-        line-height: 1.5;
-        color: #1f1f1f;
-        background: #ffffff;
+        line-height: 1.6;
+        color: var(--text);
+        background: var(--bg);
+        max-width: 720px;
+        margin-left: auto;
+        margin-right: auto;
       }
-      h1 { margin: 0 0 12px; font-size: 20px; }
-      h2 { margin: 16px 0 8px; font-size: 16px; color: #2c3e50; border-bottom: 1px solid #eee; padding-bottom: 4px; }
-      h3 { margin: 12px 0 6px; font-size: 14px; color: #34495e; }
-      ul { margin: 0 0 10px; padding-left: 18px; }
-      li { margin: 4px 0; }
-      strong { color: #2980b9; }
+      h1 {
+        margin: 0 0 20px;
+        font-size: 24px;
+        color: var(--accent);
+        border-bottom: 2px solid var(--border);
+        padding-bottom: 10px;
+      }
+      h2 {
+        margin: 28px 0 12px;
+        font-size: 18px;
+        color: var(--accent);
+      }
+      h3 {
+        margin: 18px 0 8px;
+        font-size: 14px;
+        color: #8aabcc;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      ul { margin: 0 0 12px; padding-left: 20px; }
+      li { margin: 6px 0; }
+      strong { color: var(--accent); }
+      a { color: var(--accent); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      code {
+        background: var(--card);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: "Courier New", monospace;
+        font-size: 12px;
+        color: #f5a050;
+      }
+      hr {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 20px 0;
+      }
+      blockquote {
+        margin: 12px 0;
+        padding: 10px 16px;
+        border-left: 3px solid var(--accent);
+        background: var(--card);
+        border-radius: 0 6px 6px 0;
+      }
+      #loading {
+        color: var(--muted);
+        font-style: italic;
+      }
+      #error {
+        color: #f28482;
+        padding: 16px;
+        background: #2a1515;
+        border-radius: 6px;
+        border: 1px solid #5a2020;
+      }
     </style>
   </head>
   <body>
-<h1>Changelog</h1>
+    <h1>Changelog</h1>
+    <div id="content"><p id="loading">Loading changelog...</p></div>
 
-All notable changes to this project will be documented in this file.
-
-<h2>[0.1.2] - 2026-04-27</h2>
-
-<h3>Added</h3>
-<ul>
-<li>**Popup v2 Redesign**: Complete visual overhaul of the popup with a compact 280px dark-blue marine palette.</li>
-<li>**Donate Button**: Prominent donation link in the navigation area with warm orange contrast.</li>
-<li>**Footer Links**: Added Changelog and GitHub buttons for quick access.</li>
-<li>**Custom Checkboxes**: Replaced native checkboxes with styled visual toggles (blue active state with checkmark SVG).</li>
-</ul>
-
-<h3>Changed</h3>
-<ul>
-<li>**Tab Consolidation**: Merged Giveaways, Profile, and Auctions toggles into the General tab for fewer clicks.</li>
-<li>**Navigation**: Reduced from 6 tabs to 3 (General, Items, Inventory) while preserving all functionality.</li>
-<li>**Popup Dimensions**: Reduced width from 520px to 280px for a cleaner, more focused interface.</li>
-</ul>
-
-<h2>[0.1.1] - 2026-04-27</h2>
-
-<h3>Added</h3>
-<ul>
-<li>**i18n System**: Full internationalization support with locales for English, Portuguese (BR), Spanish, and Russian.</li>
-<li>**Language Selector**: New popup language selector with SVG flag icons instead of emojis.</li>
-<li>**Custom Scrollbar**: Styled popup scrollbar for better UX.</li>
-<li>**Build Scripts**: Added `build-changelog.mjs` to auto-generate `CHANGE_LOG.html` from `CHANGE_LOG.md`.</li>
-</ul>
-
-<h3>Changed</h3>
-<ul>
-<li>**UI Text**: Improved clarity of toggle labels and descriptions (e.g., "Fix Profile Accessibility" instead of "Fix X error").</li>
-<li>**Documentation**: Rewrote `README.md` and `PRIVACY_POLICY.md` with professional, detailed content.</li>
-<li>**Options Config**: Updated default labels in `options-config.ts` to be more descriptive.</li>
-</ul>
-
-<h3>Removed</h3>
-<ul>
-<li>**Unused Assets**: Cleaned up 260 unused files including `app-icons`, `fam-flags.png`, and extra flag SVGs.</li>
-<li>**Unused Provider Logos**: Removed 15 unused marketplace provider images.</li>
-</ul>
-
-<h3>Fixed</h3>
-<ul>
-<li>**Accessibility**: Fixed ARIA spam in profile pages that caused browser lag.</li>
-<li>**UI Alignment**: Corrected label spacing and alignment in the language selector.</li>
-</ul>
-
-<h2>[0.1.0] - 2026-04-20</h2>
-
-<h3>Added</h3>
-<ul>
-<li>Initial Mannco Enhancer starter base using Manifest V3.</li>
-<li>Popup-driven settings flow with typed storage synchronization.</li>
-<li>Background service worker and content script infrastructure.</li>
-<li>Core feature set: Inventory highlights, Quick Update modal, and Buy-order safety tools.</li>
-<li>Support for multiple locales (EN, PT-BR, ES, RU).</li>
-</ul>
-
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+      (async () => {
+        const container = document.getElementById('content');
+        try {
+          const response = await fetch('CHANGE_LOG.md');
+          if (!response.ok) throw new Error('Failed to load CHANGE_LOG.md');
+          const md = await response.text();
+          container.innerHTML = marked.parse(md);
+        } catch (err) {
+          container.innerHTML = `<div id="error">Error loading changelog: ${err.message}</div>`;
+        }
+      })();
+    </script>
   </body>
 </html>
