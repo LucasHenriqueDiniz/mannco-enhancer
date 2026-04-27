@@ -31,6 +31,7 @@ const PROFILE_EXPORT_MODAL_BACKDROP_ID = "mannco-enhancer-export-modal-backdrop"
 const PROFILE_EXPORT_PROGRESS_MODAL_ID = "mannco-enhancer-export-progress-modal";
 const PROFILE_EXPORT_PROGRESS_BACKDROP_ID = "mannco-enhancer-export-progress-backdrop";
 const PROFILE_ARIA_HELPER_CLASS = "ui-helper-hidden-accessible";
+const PROFILE_DELETE_HITBOX_STYLE_ID = "mannco-enhancer-delete-hitbox-style";
 let profileAriaLiveObserver: MutationObserver | null = null;
 let profileAriaLiveCleanupPending = false;
 
@@ -938,6 +939,45 @@ function ensureProfileActionStyles(): void {
   `;
 
   document.head.appendChild(style);
+}
+
+function ensureDeleteHitboxStyles(): void {
+  if (document.getElementById(PROFILE_DELETE_HITBOX_STYLE_ID)) return;
+
+  const style = document.createElement("style");
+  style.id = PROFILE_DELETE_HITBOX_STYLE_ID;
+  style.textContent = `
+    #bosContent button[onclick*='removeBO'],
+    #bosContent button.text-danger[title='Remove'] {
+      min-width: 32px !important;
+      min-height: 32px !important;
+      padding: 4px 8px !important;
+      border: 1px solid rgba(220, 53, 69, 0.5) !important;
+      border-radius: 6px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      cursor: pointer !important;
+      transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease !important;
+    }
+
+    #bosContent button[onclick*='removeBO']:hover,
+    #bosContent button.text-danger[title='Remove']:hover {
+      background-color: rgba(220, 53, 69, 0.12) !important;
+      border-color: rgba(220, 53, 69, 0.85) !important;
+    }
+
+    #bosContent button[onclick*='removeBO']:active,
+    #bosContent button.text-danger[title='Remove']:active {
+      transform: scale(0.92) !important;
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
+function removeDeleteHitboxStyles(): void {
+  document.getElementById(PROFILE_DELETE_HITBOX_STYLE_ID)?.remove();
 }
 
 function formatDuration(ms: number): string {
@@ -2229,9 +2269,16 @@ export const profileModule: ContentModule = {
     applyProfileAriaLiveSpamFix(settings.enabled && settings.profileFixXError);
     if (!settings.enabled) {
       cleanupProfileActionButtons();
+      removeDeleteHitboxStyles();
       return;
     }
 
     ensureProfileActionButtons(settings);
+
+    if (settings.profileImproveDeleteHitbox) {
+      ensureDeleteHitboxStyles();
+    } else {
+      removeDeleteHitboxStyles();
+    }
   }
 };

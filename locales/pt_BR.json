@@ -252,6 +252,8 @@
   "toggle.profileFixXError.desc": "Remove o spam de avisos ARIA invisíveis que podem causar lentidão no perfil.",
   "toggle.profileHelpers": "Ajudas de perfil",
   "toggle.profileHelpers.desc": "Melhorar página de perfil.",
+  "toggle.profileImproveDeleteHitbox": "Aumentar Área de Clique do Excluir",
+  "toggle.profileImproveDeleteHitbox.desc": "Torna os botões de exclusão individuais maiores e mais fáceis de clicar.",
   "toggle.profileRemoveAllBuyOrders": "Remover Todas as Ordens",
-  "toggle.profileRemoveAllBuyOrders.desc": "Adiciona botão para remover todas as ordens de compra de uma vez."
+  "toggle.profileRemoveAllBuyOrders.desc": "Adiciona botão para remover todas as ordens de compra com acompanhamento de progresso."
 }

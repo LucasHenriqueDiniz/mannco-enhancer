@@ -248,10 +248,12 @@
   "toggle.profileExportCashouts.desc": "Adds an export button to the cashouts table.",
   "toggle.profileExportTransactions": "Export Transactions",
   "toggle.profileExportTransactions.desc": "Adds an export button to the transaction history table.",
-  "toggle.profileFixXError": "Fix X error",
-  "toggle.profileFixXError.desc": "Fix ARIA spam in profile.",
+  "toggle.profileFixXError": "Fix Accessibility Spam",
+  "toggle.profileFixXError.desc": "Prevents repeated invisible ARIA regions that can cause profile lag.",
   "toggle.profileHelpers": "Profile helpers",
   "toggle.profileHelpers.desc": "Enhance profile page.",
+  "toggle.profileImproveDeleteHitbox": "Improve Delete Button Hitbox",
+  "toggle.profileImproveDeleteHitbox.desc": "Makes individual buy-order delete buttons larger and easier to click.",
   "toggle.profileRemoveAllBuyOrders": "Remove All Buy Orders",
-  "toggle.profileRemoveAllBuyOrders.desc": "Adds a button to remove all buy orders at once."
+  "toggle.profileRemoveAllBuyOrders.desc": "Adds a button to remove all buy orders at once with progress tracking."
 }

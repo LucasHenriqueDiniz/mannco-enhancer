@@ -88,7 +88,7 @@ export const TOGGLE_OPTIONS: ToggleOption[] = [
   {
     key: "profileFixXError",
     page: "profile",
-    label: "Fix Profile Accessibility",
+    label: "Fix Accessibility Spam",
     description: "Prevents repeated invisible ARIA regions that can cause profile lag."
   },
   {
@@ -113,7 +113,13 @@ export const TOGGLE_OPTIONS: ToggleOption[] = [
     key: "profileRemoveAllBuyOrders",
     page: "profile",
     label: "Remove All Buy Orders",
-    description: "Adds a button to remove all buy orders at once."
+    description: "Adds a button to remove all buy orders at once with progress tracking."
+  },
+  {
+    key: "profileImproveDeleteHitbox",
+    page: "profile",
+    label: "Improve Delete Button Hitbox",
+    description: "Makes individual buy-order delete buttons larger and easier to click."
   },
   {
     key: "itemHideDetailsTitle",

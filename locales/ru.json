@@ -248,10 +248,12 @@
   "toggle.profileExportCashouts.desc": "Добавляет кнопку экспорта таблицы выводов средств.",
   "toggle.profileExportTransactions": "Экспорт транзакций",
   "toggle.profileExportTransactions.desc": "Добавляет кнопку экспорта истории транзакций.",
-  "toggle.profileFixXError": "Исправить ошибку X",
-  "toggle.profileFixXError.desc": "Исправить спам ARIA в профиле.",
+  "toggle.profileFixXError": "Исправить Спам Доступности",
+  "toggle.profileFixXError.desc": "Предотвращает повторяющиеся невидимые ARIA-регионы, которые могут вызывать торможение профиля.",
   "toggle.profileHelpers": "Помощники профиля",
   "toggle.profileHelpers.desc": "Улучшить страницу профиля.",
+  "toggle.profileImproveDeleteHitbox": "Увеличить Кнопку Удаления",
+  "toggle.profileImproveDeleteHitbox.desc": "Делает отдельные кнопки удаления больше и удобнее для нажатия.",
   "toggle.profileRemoveAllBuyOrders": "Удалить все ордера",
-  "toggle.profileRemoveAllBuyOrders.desc": "Добавляет кнопку для удаления всех ордеров на покупку сразу."
+  "toggle.profileRemoveAllBuyOrders.desc": "Добавляет кнопку для удаления всех ордеров на покупку с отслеживанием прогресса."
 }

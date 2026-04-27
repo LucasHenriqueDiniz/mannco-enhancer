@@ -34,6 +34,7 @@ export type Settings = {
   profileExportCashouts: boolean;
   profileExportBuyOrders: boolean;
   profileRemoveAllBuyOrders: boolean;
+  profileImproveDeleteHitbox: boolean;
   itemHideDetailsTitle: boolean;
   itemHideBuyOrderHint: boolean;
   itemHideTf2ShopButton: boolean;

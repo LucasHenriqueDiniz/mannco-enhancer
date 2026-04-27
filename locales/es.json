@@ -248,10 +248,12 @@
   "toggle.profileExportCashouts.desc": "Agrega botón para exportar la tabla de retiros.",
   "toggle.profileExportTransactions": "Exportar Transacciones",
   "toggle.profileExportTransactions.desc": "Agrega botón para exportar el historial de transacciones.",
-  "toggle.profileFixXError": "Corregir error X",
-  "toggle.profileFixXError.desc": "Corregir spam ARIA en perfil.",
+  "toggle.profileFixXError": "Corregir Spam de Accesibilidad",
+  "toggle.profileFixXError.desc": "Previene regiones ARIA invisibles repetidas que pueden causar lentitud en el perfil.",
   "toggle.profileHelpers": "Ayudas de perfil",
   "toggle.profileHelpers.desc": "Mejorar página de perfil.",
+  "toggle.profileImproveDeleteHitbox": "Aumentar Zona de Clic del Eliminar",
+  "toggle.profileImproveDeleteHitbox.desc": "Hace los botones de eliminar individuales más grandes y fáciles de clicar.",
   "toggle.profileRemoveAllBuyOrders": "Eliminar Todas las Órdenes",
-  "toggle.profileRemoveAllBuyOrders.desc": "Agrega botón para eliminar todas las órdenes de compra a la vez."
+  "toggle.profileRemoveAllBuyOrders.desc": "Agrega botón para eliminar todas las órdenes de compra con seguimiento de progreso."
 }
