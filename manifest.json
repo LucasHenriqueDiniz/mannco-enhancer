@@ -52,7 +52,8 @@
     {
       "resources": [
         "assets/SteamLogo.png",
-        "assets/providers/*"
+        "assets/providers/*",
+        "CHANGE_LOG.md"
       ],
       "matches": [
         "https://mannco.store/*",

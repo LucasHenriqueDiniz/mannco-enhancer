@@ -62,17 +62,6 @@
         border-top: 1px solid var(--border);
         margin: 20px 0;
       }
-      blockquote {
-        margin: 12px 0;
-        padding: 10px 16px;
-        border-left: 3px solid var(--accent);
-        background: var(--card);
-        border-radius: 0 6px 6px 0;
-      }
-      #loading {
-        color: var(--muted);
-        font-style: italic;
-      }
       #error {
         color: #f28482;
         padding: 16px;
@@ -84,19 +73,45 @@
   </head>
   <body>
     <h1>Changelog</h1>
-    <div id="content"><p id="loading">Loading changelog...</p></div>
+    <div id="content"><p style="color: var(--muted); font-style: italic;">Loading changelog...</p></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
+      // Ultra-lightweight markdown parser for our changelog format
+      function parseMarkdown(md) {
+        return md
+          .replace(/^#### (.*$)/gm, '<h4>$1</h4>')
+          .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+          .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+          .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/`([^`]+)`/g, '<code>$1</code>')
+          .replace(/^- (.*$)/gm, '<li>$1</li>')
+          .replace(/(<li>.*<\/li>\n?)+/gs, '<ul>$&</ul>')
+          .replace(/\n{2,}/g, '\n\n')
+          .trim();
+      }
+
       (async () => {
         const container = document.getElementById('content');
         try {
-          const response = await fetch('CHANGE_LOG.md');
-          if (!response.ok) throw new Error('Failed to load CHANGE_LOG.md');
+          const mdUrl = new URL('CHANGE_LOG.md', window.location.href).href;
+          const response = await fetch(mdUrl);
+
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status} - ${response.statusText}`);
+          }
+
           const md = await response.text();
-          container.innerHTML = marked.parse(md);
+          container.innerHTML = parseMarkdown(md);
         } catch (err) {
-          container.innerHTML = `<div id="error">Error loading changelog: ${err.message}</div>`;
+          console.error('[Changelog] Failed to load:', err);
+          container.innerHTML = `<div id="error">
+            <strong>Failed to load changelog</strong><br/>
+            ${err.message}<br/><br/>
+            <span style="color: var(--muted); font-size: 12px;">
+              Make sure CHANGE_LOG.md exists in the extension root directory.
+            </span>
+          </div>`;
         }
       })();
     </script>
