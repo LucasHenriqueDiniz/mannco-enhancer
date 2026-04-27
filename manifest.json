@@ -55,6 +55,7 @@
       "resources": [
         "assets/SteamLogo.png",
         "assets/providers/*",
+        "locales/*",
         "CHANGE_LOG.md"
       ],
       "matches": [

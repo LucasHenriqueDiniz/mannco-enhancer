@@ -2,6 +2,9 @@ import type { ContentModule } from "../types";
 import { parseMoney, validatePrice } from "../shared/safety";
 import { EXTERNAL_PRICE_PROVIDERS, type ExternalPriceEntry, type ExternalPriceProviderId } from "../../lib/external-prices";
 import type { FetchExternalPriceProviderResponse } from "../../lib/types";
+import { t } from "../../lib/i18n";
+
+let currentLanguage = "auto";
 
 const BUY_ORDER_PROFIT_HEADER_CLASS = "mannco-enhancer-buy-order-profit-header";
 const BUY_ORDER_PROFIT_CELL_CLASS = "mannco-enhancer-buy-order-profit-cell";
@@ -479,6 +482,37 @@ function ensureItemStyle(): void {
       flex-direction: column;
       overflow: hidden;
       min-width: 0;
+    }
+
+    #mannco-enhancer-items-summary {
+      padding: 7px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #9bb1c4;
+      background: rgba(18, 30, 40, 0.45);
+      border-bottom: 1px solid rgba(82, 106, 126, 0.35);
+      letter-spacing: 0.02em;
+    }
+
+    #${ITEMS_FILTER_OPTIONS_ID} .none {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 28px 12px;
+      font-size: 12px;
+      color: #7a94a8;
+      text-align: center;
+    }
+
+    #${ITEMS_FILTER_OPTIONS_ID} .none::before {
+      content: "\f0b0";
+      font-family: "Font Awesome 6 Free";
+      font-weight: 900;
+      font-size: 22px;
+      color: #5a7285;
+      line-height: 1;
     }
 
     #${ITEMS_FILTER_TAGS_ID} {
@@ -1974,6 +2008,19 @@ function parseInputValue(input: HTMLInputElement): number {
   return Number.isFinite(parsed) && parsed !== null ? parsed : 0;
 }
 
+function calcStepValue(current: number, step: number, stepType: "fixed" | "percent", direction: 1 | -1): number {
+  if (stepType === "percent") {
+    const raw = current * (1 + (direction * step) / 100);
+    const rounded = Number(raw.toFixed(2));
+    if (rounded !== current) {
+      return rounded;
+    }
+    // percent step too small to change value at this price; fallback to minimum 0.01 step
+    return Number((current + direction * 0.01).toFixed(2));
+  }
+  return current + direction * step;
+}
+
 function setInputValue(input: HTMLInputElement, value: number, decimals: number): void {
   const normalized = latestPreventNegative ? Math.max(0, value) : value;
   const next = decimals === 0 ? String(Math.max(0, Math.floor(normalized))) : normalized.toFixed(decimals);
@@ -1984,7 +2031,11 @@ function setInputValue(input: HTMLInputElement, value: number, decimals: number)
   }
 }
 
-function ensureStepper(input: HTMLInputElement, step: number, decimals: number, mode: "quantity" | "price"): void {
+function ensureStepper(input: HTMLInputElement, step: number, decimals: number, mode: "quantity" | "price", stepType: "fixed" | "percent" = "fixed"): void {
+  const stepLabel = stepType === "percent" ? `${step}%` : String(step);
+  const minusLabel = stepType === "percent" ? `-${stepLabel}` : `-${stepLabel}`;
+  const plusLabel = stepType === "percent" ? `+${stepLabel}` : `+${stepLabel}`;
+
   if (mode === "quantity") {
     const legacy = input.parentElement?.querySelector(`.${STEP_WRAP_CLASS}[data-step-mode='quantity']`) as HTMLDivElement | null;
     legacy?.remove();
@@ -2000,20 +2051,20 @@ function ensureStepper(input: HTMLInputElement, step: number, decimals: number, 
     const minus = document.createElement("button");
     minus.type = "button";
     minus.className = STEP_BUTTON_CLASS;
-    minus.textContent = "-";
+    minus.textContent = minusLabel;
 
     const plus = document.createElement("button");
     plus.type = "button";
     plus.className = STEP_BUTTON_CLASS;
-    plus.textContent = "+";
+    plus.textContent = plusLabel;
 
     plus.addEventListener("click", () => {
-      const next = parseInputValue(input) + step;
+      const next = calcStepValue(parseInputValue(input), step, stepType, 1);
       setInputValue(input, next, decimals);
     });
 
     minus.addEventListener("click", () => {
-      const next = parseInputValue(input) - step;
+      const next = calcStepValue(parseInputValue(input), step, stepType, -1);
       setInputValue(input, next, decimals);
     });
 
@@ -2039,7 +2090,7 @@ function ensureStepper(input: HTMLInputElement, step: number, decimals: number, 
       minus.type = "button";
       minus.className = `${STEP_BUTTON_CLASS} ${STEP_PRICE_BUTTON_CLASS} ${STEP_INPUTGROUP_BUTTON_CLASS} input-group-text`;
       minus.dataset.stepRole = "minus";
-      minus.textContent = "-0.01";
+      minus.textContent = minusLabel;
     }
 
     if (!plus) {
@@ -2047,16 +2098,16 @@ function ensureStepper(input: HTMLInputElement, step: number, decimals: number, 
       plus.type = "button";
       plus.className = `${STEP_BUTTON_CLASS} ${STEP_PRICE_BUTTON_CLASS} ${STEP_INPUTGROUP_BUTTON_CLASS} input-group-text`;
       plus.dataset.stepRole = "plus";
-      plus.textContent = "+0.01";
+      plus.textContent = plusLabel;
     }
 
     minus.onclick = () => {
-      const next = parseInputValue(input) - step;
+      const next = calcStepValue(parseInputValue(input), step, stepType, -1);
       setInputValue(input, next, decimals);
     };
 
     plus.onclick = () => {
-      const next = parseInputValue(input) + step;
+      const next = calcStepValue(parseInputValue(input), step, stepType, 1);
       setInputValue(input, next, decimals);
     };
 
@@ -2087,20 +2138,20 @@ function ensureStepper(input: HTMLInputElement, step: number, decimals: number, 
   const down = document.createElement("button");
   down.type = "button";
   down.className = `${STEP_BUTTON_CLASS}${mode === "price" ? ` ${STEP_PRICE_BUTTON_CLASS}` : ""}`;
-  down.textContent = mode === "price" ? "-0.01" : "-1";
+  down.textContent = minusLabel;
 
   const up = document.createElement("button");
   up.type = "button";
   up.className = `${STEP_BUTTON_CLASS}${mode === "price" ? ` ${STEP_PRICE_BUTTON_CLASS}` : ""}`;
-  up.textContent = mode === "price" ? "+0.01" : "+1";
+  up.textContent = plusLabel;
 
   down.addEventListener("click", () => {
-    const next = parseInputValue(input) - step;
+    const next = calcStepValue(parseInputValue(input), step, stepType, -1);
     setInputValue(input, next, decimals);
   });
 
   up.addEventListener("click", () => {
-    const next = parseInputValue(input) + step;
+    const next = calcStepValue(parseInputValue(input), step, stepType, 1);
     setInputValue(input, next, decimals);
   });
 
@@ -2109,17 +2160,16 @@ function ensureStepper(input: HTMLInputElement, step: number, decimals: number, 
   input.insertAdjacentElement("afterend", wrap);
 }
 
-function bindWheelStep(input: HTMLInputElement, step: number, decimals: number): void {
+function bindWheelStep(input: HTMLInputElement, step: number, decimals: number, stepType: "fixed" | "percent" = "fixed"): void {
   if (input.dataset.boundWheel) return;
   input.dataset.boundWheel = "1";
 
   input.addEventListener(
     "wheel",
     (event) => {
-      if (!latestEnabled) return;
       event.preventDefault();
-      const delta = event.deltaY < 0 ? step : -step;
-      const next = parseInputValue(input) + delta;
+      const direction = event.deltaY < 0 ? 1 : -1;
+      const next = calcStepValue(parseInputValue(input), step, stepType, direction);
       setInputValue(input, next, decimals);
     },
     { passive: false }
@@ -2183,6 +2233,7 @@ function enhanceOfferCreateModal(settings: {
   if (!isVisible) {
     offerInput.dataset.manual = "";
     offerInput.dataset.offerAutoFilled = "";
+    offerInput.dataset.boundWheel = "";
     const existing = modal.querySelector<HTMLElement>(`#${OFFER_REFERENCE_TABLE_ID}`);
     existing?.remove();
     return;
@@ -2195,8 +2246,8 @@ function enhanceOfferCreateModal(settings: {
     });
   }
 
-  ensureStepper(offerInput, 0.01, 2, "quantity");
-  bindWheelStep(offerInput, 0.01, 2);
+  ensureStepper(offerInput, 5, 2, "price", "percent");
+  bindWheelStep(offerInput, 5, 2, "percent");
   if (settings.itemPreventNegativeInputs) {
     bindNonNegativeGuard(offerInput, 2);
   }
@@ -2205,13 +2256,10 @@ function enhanceOfferCreateModal(settings: {
   if (offerInput.dataset.manual === "1") return;
   if (offerInput.dataset.offerAutoFilled === "1") return;
 
-  const buyOrderInput = findBuyOrderInput();
-  const fromField = buyOrderInput?.value ? parseMoney(buyOrderInput.value) : null;
   const topBuyOrder = getHighestBuyOrderPrice();
-  const base = fromField && validatePrice(fromField) ? fromField : topBuyOrder;
-  if (!base || !validatePrice(base)) return;
+  if (!topBuyOrder || !validatePrice(topBuyOrder)) return;
 
-  setInputValue(offerInput, base, 2);
+  setInputValue(offerInput, topBuyOrder, 2);
   offerInput.dataset.offerAutoFilled = "1";
 
   const modalBody = modal.querySelector<HTMLElement>(".modal-body");
@@ -2273,7 +2321,7 @@ function ensureBuyOrderQuickMatchButton(settings: {
   enabled: boolean;
   itemAutoFillBuyOrderPrice: boolean;
   itemBuyOrderQuantityRules: string;
-}): void {
+}, language: string): void {
   const actions =
     document.querySelector<HTMLElement>(".nologinbo .d-grid.gap-2.d-md-flex") ||
     document.querySelector<HTMLElement>(".nologinbo .d-grid");
@@ -2293,10 +2341,10 @@ function ensureBuyOrderQuickMatchButton(settings: {
       const node = document.createElement("button");
       node.id = BUY_ORDER_HELPER_BUTTON_ID;
       node.type = "button";
-      node.textContent = "Match top +0.01";
-      node.dataset.i18nKey = "content.matchTop";
       return node;
     })();
+  const btnText = t("content.matchTop", language);
+  if (button.textContent !== btnText) button.textContent = btnText;
 
   button.onclick = () => {
     const top = getHighestBuyOrderPrice() ?? getReferencePrice();
@@ -2509,7 +2557,7 @@ function bindBuyOrderAutoRefreshOnSuccess(settings: {
   });
 }
 
-function applyBuyOrderProfitTable(enabled: boolean): void {
+function applyBuyOrderProfitTable(enabled: boolean, language: string): void {
   const buyOrdersCard = findBuyOrdersCard();
   if (!buyOrdersCard) return;
 
@@ -2538,8 +2586,10 @@ function applyBuyOrderProfitTable(enabled: boolean): void {
     profitHeader.className = BUY_ORDER_PROFIT_HEADER_CLASS;
     headerRow.appendChild(profitHeader);
   }
-  profitHeader.textContent = "Flip P/L @ Lowest";
-  profitHeader.title = "Estimated profit if buy order fills and you sell at current lowest listing.";
+  const headerText = t("content.buyOrderProfitLowest", language);
+  if (profitHeader.textContent !== headerText) profitHeader.textContent = headerText;
+  const headerTitle = t("content.buyOrderProfitLowestTitle", language);
+  if (profitHeader.title !== headerTitle) profitHeader.title = headerTitle;
 
   const dataRows = table.querySelectorAll<HTMLTableRowElement>("tr");
 
@@ -2586,7 +2636,7 @@ function applyBuyOrderProfitTable(enabled: boolean): void {
   });
 }
 
-function applyUserBuyOrderMarker(enabled: boolean): void {
+function applyUserBuyOrderMarker(enabled: boolean, language: string): void {
   const buyOrdersCard = findBuyOrdersCard();
   if (!buyOrdersCard) return;
 
@@ -2644,8 +2694,13 @@ function applyUserBuyOrderMarker(enabled: boolean): void {
       desiredParent.appendChild(notice);
     }
 
+    const orderNoticeText = (price: number, qty: number) =>
+      t("content.yourActiveBuyOrder", language)
+        .replace("{price}", formatCurrency(price))
+        .replace("{qty}", String(qty));
+
     if (!table) {
-      notice.textContent = `Your active buy order: ${formatCurrency(userPrice)} x${userQty}.`;
+      notice.textContent = orderNoticeText(userPrice, userQty);
       return;
     }
 
@@ -2672,13 +2727,14 @@ function applyUserBuyOrderMarker(enabled: boolean): void {
       if (!priceCell || priceCell.querySelector(`.${BUY_ORDER_USER_BADGE_CLASS}`)) return;
       const badge = document.createElement("span");
       badge.className = BUY_ORDER_USER_BADGE_CLASS;
-      badge.textContent = "Your order";
-      badge.dataset.i18nKey = "content.yourOrder";
+      const badgeText = t("content.yourOrder", language);
+      if (badge.textContent !== badgeText) badge.textContent = badgeText;
       priceCell.appendChild(badge);
     });
 
-    if (notice.textContent !== `Your active buy order: ${formatCurrency(userPrice)} x${userQty}.`) {
-      notice.textContent = `Your active buy order: ${formatCurrency(userPrice)} x${userQty}.`;
+    const nextNotice = orderNoticeText(userPrice, userQty);
+    if (notice.textContent !== nextNotice) {
+      notice.textContent = nextNotice;
     }
   };
 
@@ -3883,10 +3939,14 @@ function applyItemsListSearch(enabled: boolean, searchEnabled: boolean, appId: n
       })
       .join("");
 
+    const totalItems = getItemsListRows().length;
+
     const groupedHtml = groupOrder
       .map((group) => {
         const groupOptions = filteredOptions.filter((option) => option.group === group);
         if (groupOptions.length === 0) return "";
+        const singleOptionCoversAll = groupOptions.length === 1 && groupOptions[0]!.count === totalItems;
+        if (singleOptionCoversAll && itemsListSearchSelected.size === 0) return "";
         const rowsHtml = groupOptions
           .map((option, index) => {
             const checked = itemsListSearchSelected.has(option.key) ? " checked" : "";
@@ -3901,7 +3961,7 @@ function applyItemsListSearch(enabled: boolean, searchEnabled: boolean, appId: n
       })
       .join("");
 
-    const optionRows = groupedHtml || `<div class="none">No options for this filter.</div>`;
+    const optionRows = groupedHtml || `<div class="none">${t("content.noFilterOptions", currentLanguage)}</div>`;
 
     wrap.innerHTML = `
       <div id="${ITEMS_FILTER_SEARCH_ROW_ID}">
@@ -4067,125 +4127,17 @@ function clearItemsListFlipDecorations(): void {
   }
 }
 
-function applyItemsListFlipTooltips(enabled: boolean): void {
-  ensureItemStyle();
-  ensureItemsListTooltipOverflowVisible();
-
-  const cells = getItemsListPriceCells();
-  if (cells.length === 0) return;
-
-  const bestBuyOrder = getHighestBuyOrderPrice();
-  const weakestBuyOrder = getLowestBuyOrderPrice();
-  const lowestListing = getLowestListingPrice();
-  const lowestNet = lowestListing ? calcAfterFees(lowestListing) : null;
-
-  for (const cell of cells) {
-    const existingWrap = cell.querySelector(`.${ITEM_FLIP_WRAP_CLASS}`) as HTMLSpanElement | null;
-
-    if (!cell.dataset.manncoBasePrice) {
-      const tooltipNode = cell.querySelector<HTMLElement>("[data-bs-original-title], [title]");
-      const tooltipText = tooltipNode?.getAttribute("data-bs-original-title") || tooltipNode?.getAttribute("title") || "";
-      const ownTooltip = cell.getAttribute("data-bs-original-title") || cell.getAttribute("title") || "";
-      cell.dataset.manncoBasePrice = (tooltipText || ownTooltip || cell.textContent || "").trim();
-    }
-
-    if (!enabled) {
-      existingWrap?.remove();
-      hideFlipFloatingTooltip();
-      continue;
-    }
-
-    const listingPrice = parsePriceFromCellText(cell.dataset.manncoBasePrice || "");
-    const wrap =
-      existingWrap ??
-      (() => {
-        const node = document.createElement("span");
-        node.className = ITEM_FLIP_WRAP_CLASS;
-
-        const pill = document.createElement("span");
-        pill.className = ITEM_FLIP_PILL_CLASS;
-pill.textContent = "Flip";
-        pill.dataset.i18nKey = "content.flip";
-        node.appendChild(pill);
-        cell.appendChild(node);
-        return node;
-      })();
-
-    const pill = wrap.querySelector(`.${ITEM_FLIP_PILL_CLASS}`) as HTMLSpanElement | null;
-    if (!pill) continue;
-
-    wrap.querySelectorAll(`.${ITEM_FLIP_TOOLTIP_LEGACY_CLASS}`).forEach((node) => node.remove());
-
-    if (!wrap.dataset.boundFlipHover) {
-      wrap.dataset.boundFlipHover = "1";
-      wrap.addEventListener("mouseenter", () => {
-        const html = wrap.dataset.flipTooltipHtml || "";
-        if (!html) return;
-        showFlipFloatingTooltip(wrap, html);
-      });
-      wrap.addEventListener("mousemove", () => {
-        const html = wrap.dataset.flipTooltipHtml || "";
-        if (!html) return;
-        showFlipFloatingTooltip(wrap, html);
-      });
-      wrap.addEventListener("mouseleave", () => {
-        hideFlipFloatingTooltip();
-      });
-    }
-
-    if (!listingPrice) {
-      const html = `<span class="${ITEM_FLIP_TOOLTIP_TITLE_CLASS}">Flip estimate</span><span class="${ITEM_FLIP_TOOLTIP_LINE_CLASS}">Waiting for buy-order data to compute flip estimate.</span>`;
-      wrap.dataset.flipTooltipHtml = html;
-      if (pill) pill.classList.remove(ITEM_FLIP_POSITIVE_CLASS, ITEM_FLIP_NEGATIVE_CLASS);
-      if (pill && pill.textContent !== "Flip") pill.textContent = "Flip";
-      continue;
-    }
-
-    const instantFlip = bestBuyOrder ? bestBuyOrder - listingPrice : null;
-    const instantPct = instantFlip !== null ? (instantFlip / listingPrice) * 100 : null;
-    const relistFlip = lowestNet !== null ? lowestNet - listingPrice : null;
-    const relistPct = relistFlip !== null ? (relistFlip / listingPrice) * 100 : null;
-
-    const sign = (value: number | null): string => (value !== null && value >= 0 ? "+" : "");
-    const money = (value: number | null): string => (value === null ? "-" : `${sign(value)}${formatCurrency(Math.abs(value))}`);
-    const pct = (value: number | null): string => (value === null ? "-" : `${sign(value)}${value.toFixed(1)}%`);
-
-    const html = [
-      `<span class="${ITEM_FLIP_TOOLTIP_TITLE_CLASS}">Flip estimate for this listing</span>`,
-      `<span class="${ITEM_FLIP_TOOLTIP_LINE_CLASS}">Top buy order: ${bestBuyOrder ? formatCurrency(bestBuyOrder) : "-"}</span>`,
-      `<span class="${ITEM_FLIP_TOOLTIP_LINE_CLASS}">Listing price: ${formatCurrency(listingPrice)}</span>`,
-      `<span class="${ITEM_FLIP_TOOLTIP_LINE_CLASS}">Instant sell to top buy order: ${money(instantFlip)} (${pct(instantPct)})</span>`,
-      `<span class="${ITEM_FLIP_TOOLTIP_LINE_CLASS}">Relist at lowest (net): ${money(relistFlip)} (${pct(relistPct)})</span>`,
-      weakestBuyOrder
-        ? `<span class="${ITEM_FLIP_TOOLTIP_LINE_CLASS}">Lowest buy order: ${formatCurrency(weakestBuyOrder)}</span>`
-        : "",
-      lowestListing && lowestNet
-        ? `<span class="${ITEM_FLIP_TOOLTIP_LINE_CLASS}">Lowest listing reference: ${formatCurrency(lowestListing)} -> ${formatCurrency(lowestNet)} net</span>`
-        : ""
-    ].join("");
-
-    wrap.dataset.flipTooltipHtml = html;
-    if (pill) {
-      const primary = relistFlip ?? instantFlip ?? 0;
-      pill.classList.toggle(ITEM_FLIP_POSITIVE_CLASS, primary >= 0);
-      pill.classList.toggle(ITEM_FLIP_NEGATIVE_CLASS, primary < 0);
-      const primaryPct = relistPct ?? instantPct;
-      const label = primaryPct === null ? "Flip" : `Flip ${primaryPct >= 0 ? "+" : ""}${primaryPct.toFixed(1)}%`;
-      if (pill.textContent !== label) pill.textContent = label;
-    }
-  }
-}
-
 export const itemModule: ContentModule = {
   id: "item-module",
   routes: ["item"],
   apply(context, settings) {
+    currentLanguage = settings.language;
     ensureItemStyle();
 
     applyItemVisibilityOptions(settings);
     applyChartMode(settings.itemChartMode, settings.enabled);
     applySectionOrder(settings.itemSectionOrder, settings.enabled);
-    applyBuyOrderProfitTable(settings.enabled && settings.itemBuyOrderTableProfit);
+    applyBuyOrderProfitTable(settings.enabled && settings.itemBuyOrderTableProfit, settings.language);
     clearItemsListFlipDecorations();
     applyItemsListActionButtonsVisibility(
       settings.enabled,
@@ -4222,10 +4174,10 @@ export const itemModule: ContentModule = {
     applyBuyOrderAutoFill(settings);
     enhanceQuantityAndPriceInputs(settings);
     enhanceOfferCreateModal(settings);
-    ensureBuyOrderQuickMatchButton(settings);
+    ensureBuyOrderQuickMatchButton(settings, settings.language);
     enhanceBuyOrderActionButtons();
     bindBuyOrderTableRowFill(settings);
-    applyUserBuyOrderMarker(settings.enabled);
+    applyUserBuyOrderMarker(settings.enabled, settings.language);
     bindNegativeFlipSubmitWarning(settings);
     bindBuyOrderAutoRefreshOnSuccess(settings);
     // Market-style UI enhancements for Items page
@@ -4315,13 +4267,14 @@ function renderActiveFilterTags(): void {
   const inputs = Array.from<HTMLInputElement>(
     document.querySelectorAll<HTMLInputElement>("#mannco-enhancer-items-filter-options input[type='checkbox'], #mannco-enhancer-items-filter-options input[type='radio']")
   );
+  const noColorLabel = t("content.noColor", currentLanguage);
   inputs.forEach((inp) => {
     if (!inp.checked) return;
     const label = inp.closest("label");
     let rawText = label?.textContent?.trim() ?? "";
     let displayText = rawText;
     if (rawText.toLowerCase() === "no color") {
-      displayText = "No color";
+      displayText = noColorLabel;
     } else if (rawText.length > 0) {
       displayText = rawText.charAt(0).toUpperCase() + rawText.slice(1);
     }
@@ -4337,9 +4290,8 @@ function updateResumo(): void {
   const wrap = document.getElementById(ITEMS_FILTER_WRAP_ID);
   const summaryId = "mannco-enhancer-items-summary";
   let el = document.getElementById(summaryId);
-  // Use English text and count total items using the market rows (no color filter specific)
   const countTotal = (document.querySelectorAll('.itemListPagination').length) || 0;
-  const text = `Summary of current items: ${countTotal}`;
+  const text = t("content.summaryOfCurrentItems", currentLanguage).replace("{count}", String(countTotal));
   if (!el && wrap) {
     el = document.createElement("div");
     el.id = summaryId;

@@ -242,8 +242,6 @@ async function bootstrap(): Promise<void> {
 
 function applyTranslations(): void {
   const lang = settings.language;
-  if (lang === "auto") return;
-  
   localizeContainer(document.body, lang);
 }
 
