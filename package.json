@@ -5,6 +5,7 @@
   "description": "Manifest V3 browser extension starter for mannco.store enhancements.",
   "scripts": {
     "build": "node scripts/build.mjs",
+    "build:zip": "npm run build && node scripts/build-zip.mjs",
     "typecheck": "tsc --noEmit",
     "i18n:build": "node scripts/build-locales.mjs",
     "i18n:sync": "node scripts/sync-locales.mjs",
@@ -12,6 +13,7 @@
   },
   "devDependencies": {
     "@types/chrome": "^0.0.293",
+    "archiver": "^7.0.1",
     "esbuild": "^0.25.3",
     "typescript": "^5.8.3"
   }
