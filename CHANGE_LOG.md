@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - **Footer Links**: Added Changelog and GitHub buttons for quick access.
 - **Custom Checkboxes**: Replaced native checkboxes with styled visual toggles (blue active state with checkmark SVG).
 - **Dynamic Changelog**: Changelog button now renders CHANGE_LOG.md content directly via blob URL, eliminating external CDN dependencies.
+- **Changelog Header**: Added branded header with extension icon, title, subtitle, and quick links to Donate and GitHub.
 
 ### Changed
 - **Tab Layout**: Restored 6 tabs (General, Items, Inventory, Giveaways, Profile, Auctions) with Lucide-style outline/fill icons.
