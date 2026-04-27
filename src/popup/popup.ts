@@ -79,11 +79,13 @@ function translateGroupName(groupName: string, lang: string): string {
   return tr(mapped, lang, groupName);
 }
 
-// General now includes single-option pages (giveaways/profile/auctions)
 const PANEL_PAGES = {
-  general: ["global", "home", "bundles", "giveaways", "profile", "auctions"],
+  general: ["global", "home", "bundles"],
+  giveaways: ["giveaways"],
   item: ["item"],
-  inventory: ["inventory"]
+  inventory: ["inventory"],
+  profile: ["profile"],
+  auctions: ["auctions"]
 } as const;
 
 function byId<T extends HTMLElement>(id: string): T {
@@ -104,11 +106,14 @@ function getLanguageValue(settings: Settings): "auto" | "en" | "pt_BR" | "es" | 
   return settings.language;
 }
 
-function setActiveTab(tab: "general" | "item" | "inventory"): void {
+function setActiveTab(tab: "general" | "giveaways" | "item" | "inventory" | "profile" | "auctions"): void {
   const tabs = [
     { button: byId<HTMLButtonElement>("tabGeneral"), panel: byId<HTMLElement>("generalPanel"), key: "general" as const },
+    { button: byId<HTMLButtonElement>("tabGiveaways"), panel: byId<HTMLElement>("giveawaysPanel"), key: "giveaways" as const },
     { button: byId<HTMLButtonElement>("tabItem"), panel: byId<HTMLElement>("itemPanel"), key: "item" as const },
-    { button: byId<HTMLButtonElement>("tabInventory"), panel: byId<HTMLElement>("inventoryPanel"), key: "inventory" as const }
+    { button: byId<HTMLButtonElement>("tabInventory"), panel: byId<HTMLElement>("inventoryPanel"), key: "inventory" as const },
+    { button: byId<HTMLButtonElement>("tabProfile"), panel: byId<HTMLElement>("profilePanel"), key: "profile" as const },
+    { button: byId<HTMLButtonElement>("tabAuctions"), panel: byId<HTMLElement>("auctionsPanel"), key: "auctions" as const }
   ];
 
   for (const tabInfo of tabs) {
@@ -270,8 +275,11 @@ async function bootstrap(): Promise<void> {
 
   const renderAndBindToggles = (): void => {
     renderPanelRows("generalToggleRows", PANEL_PAGES.general, settings.language);
+    renderPanelRows("giveawaysToggleRows", PANEL_PAGES.giveaways, settings.language);
     renderPanelRows("itemToggleRows", PANEL_PAGES.item, settings.language);
     renderPanelRows("inventoryToggleRows", PANEL_PAGES.inventory, settings.language);
+    renderPanelRows("profileToggleRows", PANEL_PAGES.profile, settings.language);
+    renderPanelRows("auctionsToggleRows", PANEL_PAGES.auctions, settings.language);
 
     for (const option of TOGGLE_OPTIONS) {
       const field = document.querySelector<HTMLInputElement>(`input[data-key="${option.key}"]`);
@@ -299,8 +307,11 @@ async function bootstrap(): Promise<void> {
   updateLanguageFlag(settings.language);
 
   byId<HTMLButtonElement>("tabGeneral").addEventListener("click", () => setActiveTab("general"));
+  byId<HTMLButtonElement>("tabGiveaways").addEventListener("click", () => setActiveTab("giveaways"));
   byId<HTMLButtonElement>("tabItem").addEventListener("click", () => setActiveTab("item"));
   byId<HTMLButtonElement>("tabInventory").addEventListener("click", () => setActiveTab("inventory"));
+  byId<HTMLButtonElement>("tabProfile").addEventListener("click", () => setActiveTab("profile"));
+  byId<HTMLButtonElement>("tabAuctions").addEventListener("click", () => setActiveTab("auctions"));
 
   // Footer buttons
   byId<HTMLAnchorElement>("changelogBtn").addEventListener("click", (e) => {
