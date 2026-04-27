@@ -15,26 +15,57 @@
         background: #ffffff;
       }
       h1 { margin: 0 0 12px; font-size: 20px; }
-      h2 { margin: 16px 0 8px; font-size: 16px; }
+      h2 { margin: 16px 0 8px; font-size: 16px; color: #2c3e50; border-bottom: 1px solid #eee; padding-bottom: 4px; }
+      h3 { margin: 12px 0 6px; font-size: 14px; color: #34495e; }
       ul { margin: 0 0 10px; padding-left: 18px; }
       li { margin: 4px 0; }
+      strong { color: #2980b9; }
     </style>
   </head>
   <body>
-    <h1>Changelog</h1>
+<h1>Changelog</h1>
 
-    <h2>0.1.0</h2>
-    <ul>
-      <li>Initial Mannco Enhancer starter base using Manifest V3.</li>
-      <li>Added popup-driven settings flow and typed storage.</li>
-      <li>Added background and content script base for future feature logic.</li>
-    </ul>
+All notable changes to this project will be documented in this file.
 
-    <h2>0.1.1</h2>
-    <ul>
-      <li>Simplified settings UX to popup-only (removed options page).</li>
-      <li>Centralized popup toggle definitions in a single config file.</li>
-      <li>Added project policy and changelog docs for release hygiene.</li>
-    </ul>
+<h2>[0.1.1] - 2026-04-27</h2>
+
+<h3>Added</h3>
+<ul>
+<li>**i18n System**: Full internationalization support with locales for English, Portuguese (BR), Spanish, and Russian.</li>
+<li>**Language Selector**: New popup language selector with SVG flag icons instead of emojis.</li>
+<li>**Custom Scrollbar**: Styled popup scrollbar for better UX.</li>
+<li>**Build Scripts**: Added `build-changelog.mjs` to auto-generate `CHANGE_LOG.html` from `CHANGE_LOG.md`.</li>
+</ul>
+
+<h3>Changed</h3>
+<ul>
+<li>**UI Text**: Improved clarity of toggle labels and descriptions (e.g., "Fix Profile Accessibility" instead of "Fix X error").</li>
+<li>**Documentation**: Rewrote `README.md` and `PRIVACY_POLICY.md` with professional, detailed content.</li>
+<li>**Options Config**: Updated default labels in `options-config.ts` to be more descriptive.</li>
+</ul>
+
+<h3>Removed</h3>
+<ul>
+<li>**Unused Assets**: Cleaned up 260 unused files including `app-icons`, `fam-flags.png`, and extra flag SVGs.</li>
+<li>**Unused Provider Logos**: Removed 15 unused marketplace provider images.</li>
+</ul>
+
+<h3>Fixed</h3>
+<ul>
+<li>**Accessibility**: Fixed ARIA spam in profile pages that caused browser lag.</li>
+<li>**UI Alignment**: Corrected label spacing and alignment in the language selector.</li>
+</ul>
+
+<h2>[0.1.0] - 2026-04-20</h2>
+
+<h3>Added</h3>
+<ul>
+<li>Initial Mannco Enhancer starter base using Manifest V3.</li>
+<li>Popup-driven settings flow with typed storage synchronization.</li>
+<li>Background service worker and content script infrastructure.</li>
+<li>Core feature set: Inventory highlights, Quick Update modal, and Buy-order safety tools.</li>
+<li>Support for multiple locales (EN, PT-BR, ES, RU).</li>
+</ul>
+
   </body>
 </html>
